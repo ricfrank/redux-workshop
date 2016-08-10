@@ -2,8 +2,9 @@ import expect, { createSpy, spyOn, isSpy } from 'expect'
 import deepFreeze from 'deep-freeze'
 
 const addCounter = (list) => {
-    list.push(0);
-    return list;
+    //create and return a new array
+    // return list.concat([0]);
+    return [...list, 0];
 };
 
 const testAddCounter = () => {

@@ -1,47 +1,21 @@
 import expect, { createSpy, spyOn, isSpy } from 'expect'
-import {createStore} from 'redux';
-import React from 'react';
-import ReactDom from 'react-dom';
+import deepFreeze from 'deep-freeze'
 
-const counter = (state = 0, action) => {
-    if(action.type === 'INCREMENT') {
-        return state + 1;
-    }
-
-    if(action.type === 'DECREMENT') {
-        return state - 1;
-    }
-    return state;
+const addCounter = (list) => {
+    list.push(0);
+    return list;
 };
 
-const store = createStore(counter);
+const testAddCounter = () => {
+    const listBefore = [];
+    const listAfter = [0];
 
-const Counter = ({
-    value,
-    onIncrement,
-    onDecrement
-}) => (
-    <div>
-        <h1>{value}</h1>
-        <button onClick={onIncrement}>+</button>
-        <button onClick={onDecrement}>-</button>
-    </div>
-);
+    deepFreeze(listBefore);
 
-const render = () => {
-    ReactDom.render(
-        <Counter
-            value={store.getState()}
-            onIncrement={() =>
-                store.dispatch({type: 'INCREMENT'})
-            }
-            onDecrement={() =>
-                store.dispatch({type: 'DECREMENT'})
-            }
-        />,
-        document.getElementById('root')
-    );
+    expect(
+        addCounter(listBefore)
+    ).toEqual(listAfter)
 };
 
-store.subscribe(render);
-render();
+testAddCounter();
+console.log('All tests passed!');

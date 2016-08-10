@@ -1,9 +1,24 @@
 import expect from 'expect'
 import deepFreeze from 'deep-freeze'
 
+
 const toggleTodo = (todo) => {
-    todo.completed = !todo.completed;
-    return todo;
+
+    //require babel polyfill babel-preset-stage-2
+    return {
+        ...todo,
+        completed: !todo.completed
+    };
+
+    //require babel polyfill babel-preset-es2015
+    // return Object.assign({}, todo, {
+    //     completed: !todo.completed
+    // });
+    // return {
+    //     id: todo.id,
+    //     text: todo.text,
+    //     completed: !todo.completed
+    // };
 };
 
 const testToggleTodo = () => {

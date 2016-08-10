@@ -1,4 +1,5 @@
 import expect, { createSpy, spyOn, isSpy } from 'expect'
+import { createStore } from 'redux'
 
 const counter = (state = 0, action) => {
     if(action.type === 'INCREMENT') {
@@ -11,32 +12,20 @@ const counter = (state = 0, action) => {
     return state;
 }
 
-expect(
-    counter(0, {type: 'INCREMENT'})
-).toEqual(1);
+const store = createStore(counter);
 
-expect(
-    counter(1, {type: 'INCREMENT'})
-).toEqual(2);
+console.log(store.getState());
 
-expect(
-    counter(2, {type: 'INCREMENT'})
-).toEqual(3);
+store.dispatch({ type: 'INCREMENT' });
+console.log(store.getState());
 
-expect(
-    counter(3, {type: 'INCREMENT'})
-).toEqual(4);
+const render = () => {
+    document.body.innerText = store.getState();
+};
 
-expect(
-    counter(3, {type: 'DECREMENT'})
-).toEqual(2);
+store.subscribe(render);
+render();
 
-expect(
-    counter(3, {type: 'ZIOZIO'})
-).toEqual(3);
-
-expect(
-    counter(undefined, {})
-).toEqual(0);
-
-console.log('Tests passed!');
+document.addEventListener('click', () => {
+    store.dispatch({type: 'INCREMENT'});
+});

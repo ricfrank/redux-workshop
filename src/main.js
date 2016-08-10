@@ -1,6 +1,6 @@
 import expect, { createSpy, spyOn, isSpy } from 'expect'
 
-function counter(state = 0, action) {
+const counter = (state = 0, action) => {
     if(action.type === 'INCREMENT') {
         return state + 1;
     }

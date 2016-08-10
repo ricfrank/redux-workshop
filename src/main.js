@@ -1,22 +1,29 @@
-import expect, { createSpy, spyOn, isSpy } from 'expect'
+import expect from 'expect'
 import deepFreeze from 'deep-freeze'
 
-const addCounter = (list) => {
-    //create and return a new array
-    // return list.concat([0]);
-    return [...list, 0];
+const toggleTodo = (todo) => {
+    todo.completed = !todo.completed;
+    return todo;
 };
 
-const testAddCounter = () => {
-    const listBefore = [];
-    const listAfter = [0];
+const testToggleTodo = () => {
+    const todoBefore = {
+        id: 0,
+        text: 'Learn Redux',
+        completed: false
+    };
+    const todoAfter = {
+        id: 0,
+        text: 'Learn Redux',
+        completed: true
+    };
 
-    deepFreeze(listBefore);
+    deepFreeze(todoBefore);
 
     expect(
-        addCounter(listBefore)
-    ).toEqual(listAfter)
+        toggleTodo(todoBefore)
+    ).toEqual(todoAfter);
 };
 
-testAddCounter();
+testToggleTodo();
 console.log('All tests passed!');

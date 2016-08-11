@@ -1,4 +1,4 @@
-import {createStore} from 'redux'
+import {createStore, combineReducers} from 'redux'
 
 const todo = (state, action) => {
     switch (action.type) {
@@ -52,17 +52,30 @@ const visibilityFilter = (
     }
 };
 
-const todoApp = (state = {}, action) => {
-    return {
-        todos: todos(
-            state.todos, action
-        ),
-        visibilityFilter: visibilityFilter(
-            state.visibilityFilter,
-            action
-        )
-    };
-};
+//only if the key name is the same of value name
+const todoApp = combineReducers({
+    todos,
+    visibilityFilter
+});
+
+//same
+// const todoApp = combineReducers({
+//     todos: todos,
+//     visibilityFilter: visibilityFilter
+// });
+
+//old
+// const todoApp = (state = {}, action) => {
+//     return {
+//         todos: todos(
+//             state.todos, action
+//         ),
+//         visibilityFilter: visibilityFilter(
+//             state.visibilityFilter,
+//             action
+//         )
+//     };
+// };
 
 const store = createStore(todoApp);
 

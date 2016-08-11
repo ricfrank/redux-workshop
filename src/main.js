@@ -1,44 +1,43 @@
 import expect from 'expect'
 import deepFreeze from 'deep-freeze'
 
-
-const toggleTodo = (todo) => {
-
-    //require babel polyfill babel-preset-stage-2
-    return {
-        ...todo,
-        completed: !todo.completed
-    };
-
-    //require babel polyfill babel-preset-es2015
-    // return Object.assign({}, todo, {
-    //     completed: !todo.completed
-    // });
-    // return {
-    //     id: todo.id,
-    //     text: todo.text,
-    //     completed: !todo.completed
-    // };
+const todos = (state = [], action) => {
+    switch (action.type) {
+        case 'ADD_TODO':
+            return [
+                ...state,
+                {
+                    id: 0,
+                    text: 'Learn Redux',
+                    completed: false
+                }
+            ];
+        default:
+            return state;
+    }
 };
 
-const testToggleTodo = () => {
-    const todoBefore = {
+const testAddTodo = () => {
+    const stateBefore = [];
+    const action = {
+        type: 'ADD_TODO',
         id: 0,
-        text: 'Learn Redux',
         completed: false
     };
-    const todoAfter = {
-        id: 0,
-        text: 'Learn Redux',
-        completed: true
-    };
-
-    deepFreeze(todoBefore);
+    const stateAfter = [
+        {
+            id: 0,
+            text: 'Learn Redux',
+            completed: false
+        }
+    ];
+    deepFreeze(stateBefore);
+    deepFreeze(action);
 
     expect(
-        toggleTodo(todoBefore)
-    ).toEqual(todoAfter);
+        todos(stateBefore, action)
+    ).toEqual(stateAfter);
 };
 
-testToggleTodo();
-console.log('All tests passed!');
+testAddTodo();
+console.log('All tests passed');

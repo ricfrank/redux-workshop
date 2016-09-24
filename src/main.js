@@ -1,72 +1,22 @@
-import {createStore, combineReducers} from 'redux'
-import React, {Component} from 'react'
-import ReactDom from 'react-dom'
-
-const todo = (state, action) => {
-    switch (action.type) {
-        case 'ADD_TODO':
-            return {
-                id: action.id,
-                text: action.text,
-                completed: false
-            };
-        case 'TOGGLE_TODO':
-            if (state.id !== action.id) {
-                return state
-            }
-
-            return {
-                ...state,
-                completed: !state.completed
-            };
-        default:
-            return state;
-    }
-};
-
-const todos = (state = [], action) => {
-    switch (action.type) {
-        case 'ADD_TODO':
-            return [
-                ...state,
-                todo(undefined, action)
-            ];
-        case 'TOGGLE_TODO':
-            return state.map(t => {
-                return todo(t, action)
-            });
-        default:
-            return state;
-    }
-};
-
-const visibilityFilter = (
-    state = 'SHOW_ALL',
-    action
-) => {
-    switch (action.type) {
-        case 'SET_VISIBILITY_FILTER':
-            return action.filter;
-        default:
-            return state;
-    }
-};
+import {createStore, combineReducers} from 'redux';
+import React, {Component} from 'react';
+import ReactDom from 'react-dom';
+import todos from './reducers/todos';
+import visibilityFilter from './reducers/visibilityFilter';
 
 const todoApp = combineReducers({
     todos,
     visibilityFilter
 });
 
+const store = createStore(todoApp, window.devToolsExtension && window.devToolsExtension());
 
-const store = createStore(todoApp);
-
-const FilterLink = ({
-    onClick,
-    filter,
-    currentFilter,
-    children
+const Link = ({
+    active,
+    children,
+    onClick
 }) => {
-    if (filter === currentFilter) {
+    if (active) {
         return <span>{children}</span>
     }
 
@@ -74,7 +24,7 @@ const FilterLink = ({
         <a href='#'
            onClick={e => {
                e.preventDefault();
-               onClick(filter)
+               onClick()
             }}
            >
             {children}
@@ -134,33 +84,54 @@ const AddTodo = ({
     );
 };
 
-const Footer = ({
-    visibilityFilter,
-    onFilterClick
-}) => (
+class FilterLink extends Component {
+    componentDidMount() {
+        this.unsubscribe = store.subscribe(() => {
+            this.forceUpdate()
+        })
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe()
+    }
+
+    render() {
+        const props = this.props;
+        const state = store.getState();
+
+        return (
+            <Link
+                active={props.filter === state.visibilityFilter}
+                onClick={() =>
+                    store.dispatch({
+                        type: 'SET_VISIBILITY_FILTER',
+                        filter: props.filter
+                    })
+                }>
+                {props.children}
+            </Link>
+        )
+    }
+}
+
+const Footer = () => (
     <p>
         Show:
         {' '}
         <FilterLink
-            onClick={onFilterClick}
             filter='SHOW_ALL'
-            currentFilter={visibilityFilter}
         >
             All
         </FilterLink>
         {' '}
         <FilterLink
-            onClick={onFilterClick}
             filter='SHOW_ACTIVE'
-            currentFilter={visibilityFilter}
         >
             Active
         </FilterLink>
         {' '}
         <FilterLink
-            onClick={onFilterClick}
             filter='SHOW_COMPLETED'
-            currentFilter={visibilityFilter}
         >
             Completed
         </FilterLink>
@@ -214,16 +185,7 @@ const TodoApp = ({
                 })
             }
         />
-        <Footer
-            visibilityFilter={visibilityFilter}
-            onFilterClick={filter =>
-                store.dispatch({
-                    type: 'SET_VISIBILITY_FILTER',
-                    filter
-                })
-            }
-
-        />
+        <Footer />
     </div>
 );
 
